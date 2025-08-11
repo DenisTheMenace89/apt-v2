@@ -1,0 +1,243 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Actors Performer Track V2 (PWA)</title>
+<link rel="manifest" href="manifest.webmanifest" />
+<meta name="theme-color" content="#0f1115" />
+<link rel="icon" href="icon-192.png" />
+<style>
+  :root{--bg:#0f1115;--panel:#151924;--muted:#8992a3;--text:#e7eaf0;--accent:#7cacf8;--ok:#35c759;--warn:#ffcc00;--bad:#ff453a;--chip:#222835;--input:#1b2130;--border:#2a3245}
+  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,Segoe UI,Roboto}
+  header{position:sticky;top:0;background:linear-gradient(180deg,var(--bg),rgba(15,17,21,.6));backdrop-filter:blur(8px);z-index:10;border-bottom:1px solid var(--border)}
+  .container{max-width:1120px;margin:0 auto;padding:14px 16px}
+  h1{font-size:20px;margin:0}.sub{color:var(--muted);font-size:12px}
+  nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.tab{padding:8px 12px;border:1px solid var(--border);border-radius:14px;background:var(--chip);cursor:pointer;color:var(--text)}
+  .tab.active{background:var(--accent);color:#0b1220;border:none}
+  main{padding:12px 16px;max-width:1120px;margin:auto}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;margin:12px 0;overflow:hidden}
+  .card h2{font-size:16px;margin:0;padding:12px 14px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
+  .content{padding:12px 14px}.row{display:flex;gap:8px;flex-wrap:wrap}.field{flex:1;min-width:200px}
+  label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+  input,select,textarea{width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--input);color:var(--text);outline:none}
+  textarea{min-height:84px;resize:vertical}
+  .btn{padding:10px 14px;border:1px solid var(--border);background:var(--chip);color:var(--text);border-radius:12px;cursor:pointer}
+  .btn.primary{background:var(--accent);color:#0b1220;border:none}.btn.warn{background:var(--bad);border:none}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  table{width:100%;border-collapse:collapse}th,td{padding:8px;border-bottom:1px solid var(--border);vertical-align:top}th{text-align:left;color:var(--muted)}
+  .actions{display:flex;gap:6px;flex-wrap:wrap}.action{padding:6px 10px;border-radius:10px;border:1px solid var(--border);background:var(--chip);font-size:12px;text-decoration:none;color:var(--text)}
+  .hidden{display:none}.pill{padding:2px 8px;border-radius:999px;font-size:12px}.due{background:rgba(255,204,0,.15);color:#f7d774}.over{background:rgba(255,69,58,.18);color:#ff8a80}.ok{background:rgba(53,199,89,.18);color:#92e2a6}
+  .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.kpi .box{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px}.kpi .num{font-size:18px;font-weight:700}
+  .wrap{white-space:normal;max-width:260px}
+</style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <h1>Actors Performer Track V2</h1>
+    <div class="sub">PWA · Offline · Kontakte · Auditions/Bookings 2.0 · Kalender-Export</div>
+    <nav>
+      <button class="tab active" data-tab="dashboard">Dashboard</button>
+      <button class="tab" data-tab="contacts">Kontakte</button>
+      <button class="tab" data-tab="auditions">Auditions</button>
+      <button class="tab" data-tab="bookings">Bookings</button>
+      <button class="tab" data-tab="calendar">Kalender</button>
+      <button class="tab" data-tab="settings">Einstellungen</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section id="dashboard" class="tabpane">
+    <div class="kpi">
+      <div class="box"><div>Auditions (7 Tage)</div><div class="num" id="kpiA7">0</div></div>
+      <div class="box"><div>Bookings (7 Tage)</div><div class="num" id="kpiB7">0</div></div>
+      <div class="box"><div>Follow‑ups heute</div><div class="num" id="kpiFU">0</div></div>
+      <div class="box"><div>Überfällige</div><div class="num" id="kpiOver">0</div></div>
+    </div>
+  </section>
+
+  <section id="contacts" class="tabpane hidden">
+    <div class="card">
+      <h2>Kontakt anlegen</h2>
+      <div class="content">
+        <div class="row">
+          <div class="field"><label>Name*</label><input id="c_name"></div>
+          <div class="field"><label>Typ</label><select id="c_type"><option>Casting</option><option>Regie</option><option>Produktion</option><option>Agentur</option><option>Sonstiges</option></select></div>
+          <div class="field"><label>Firma</label><input id="c_company"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>E‑Mail</label><input id="c_email" type="email"></div>
+          <div class="field"><label>Telefon</label><input id="c_phone" type="tel"></div>
+          <div class="field"><label>Social</label><input id="c_social" placeholder="@instagram / linkedin url"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Wie kennengelernt</label><input id="c_met"></div>
+          <div class="field"><label>Letzte Interaktion</label><input id="c_last" type="date"></div>
+          <div class="field"><label>Nächstes Follow‑up</label><input id="c_next" type="date"></div>
+        </div>
+        <div class="row">
+          <div class="field" style="flex:1 1 100%"><label>Notizen</label><textarea id="c_notes"></textarea></div>
+        </div>
+        <div class="toolbar"><button class="btn primary" id="btnSaveContact">Speichern</button><button class="btn" id="btnResetContact">Leeren</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Kontakte</h2>
+      <div class="content">
+        <div class="toolbar" style="margin-bottom:8px">
+          <input id="cq" placeholder="Suchen …" style="flex:1">
+          <select id="ctype"><option value="all">Alle Typen</option><option>Casting</option><option>Regie</option><option>Produktion</option><option>Agentur</option><option>Sonstiges</option></select>
+        </div>
+        <table id="tblC"><thead><tr><th>Name</th><th>Firma/Typ</th><th>Kontakt</th><th>FU</th><th>Aktionen</th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <section id="auditions" class="tabpane hidden">
+    <div class="card">
+      <h2>Audition erfassen</h2>
+      <div class="content">
+        <div class="row">
+          <div class="field"><label>Datum*</label><input id="a_date" type="date"></div>
+          <div class="field"><label>Projekt*</label><input id="a_project"></div>
+          <div class="field"><label>Rolle</label><input id="a_role"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Projekt-Typ</label><select id="a_ptype"><option>Film</option><option>Serie</option><option>Werbung</option><option>Theater</option><option>Voice</option></select></div>
+          <div class="field"><label>Rollen-Typ</label><select id="a_rtype"><option>Lead</option><option>Supporting</option><option>Day Player</option><option>Extra</option></select></div>
+          <div class="field"><label>Status</label><select id="a_status"><option>Audition</option><option>Callback</option><option>Pinned</option><option>Hold</option><option>Booked</option><option>Released</option></select></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Union</label><select id="a_union"><option>None</option><option>Equity</option><option>SAG-AFTRA</option><option>ver.di</option></select></div>
+          <div class="field"><label>Pay Rate</label><input id="a_pay" placeholder="z.B. 500 €/Tag"></div>
+          <div class="field"><label>Verknüpfter Kontakt</label><input id="a_contactId" placeholder="Kontakt-ID"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Ort</label><input id="a_loc" placeholder="Adresse / Studio"></div>
+          <div class="field"><label>Material</label><input id="a_material" placeholder="Headshot/Seiten/Link"></div>
+          <div class="field"><label>Nächster Follow‑up</label><input id="a_next" type="date"></div>
+        </div>
+        <div class="row">
+          <div class="field" style="flex:1 1 100%"><label>Notizen</label><textarea id="a_notes"></textarea></div>
+        </div>
+        <div class="toolbar"><button class="btn primary" id="btnSaveAud">Speichern</button><button class="btn" id="btnResetAud">Leeren</button><button class="btn" id="btnAudICS">.ics</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Auditions</h2>
+      <div class="content">
+        <div class="toolbar" style="margin-bottom:8px">
+          <input id="aq" placeholder="Suchen …" style="flex:1">
+          <select id="afilter"><option value="all">Alle</option><option>Audition</option><option>Callback</option><option>Pinned</option><option>Hold</option><option>Booked</option><option>Released</option></select>
+        </div>
+        <table id="tblA"><thead><tr><th>Datum</th><th>Projekt</th><th>Rolle</th><th>Status</th><th>Typen</th><th>Kontakt</th><th class="wrap">Notizen</th><th>Aktionen</th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <section id="bookings" class="tabpane hidden">
+    <div class="card">
+      <h2>Booking erfassen</h2>
+      <div class="content">
+        <div class="row">
+          <div class="field"><label>Projekt*</label><input id="b_project"></div>
+          <div class="field"><label>Rolle</label><input id="b_role"></div>
+          <div class="field"><label>Union</label><select id="b_union"><option>None</option><option>Equity</option><option>SAG-AFTRA</option><option>ver.di</option></select></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Pay Rate</label><input id="b_pay" placeholder="z.B. 800 €/Tag"></div>
+          <div class="field"><label>Kontakt-ID</label><input id="b_contactId"></div>
+          <div class="field"><label>Ort</label><input id="b_loc" placeholder="Adresse / Studio"></div>
+        </div>
+        <div class="row">
+          <div class="field" style="flex:1 1 100%"><label>Appointments (Pre/Prod/Post)</label><textarea id="b_appts" placeholder="Eine pro Zeile: YYYY-MM-DD HH:MM - Titel @ Ort"></textarea></div>
+        </div>
+        <div class="row">
+          <div class="field" style="flex:1 1 100%"><label>Notizen</label><textarea id="b_notes"></textarea></div>
+        </div>
+        <div class="toolbar"><button class="btn primary" id="btnSaveBooking">Speichern</button><button class="btn" id="btnResetBooking">Leeren</button><button class="btn" id="btnBookingICS">.ics</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Bookings</h2>
+      <div class="content">
+        <table id="tblB"><thead><tr><th>Projekt</th><th>Rolle</th><th>Union</th><th>Pay</th><th>Appointments</th><th>Kontakt</th><th>Aktionen</th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <section id="calendar" class="tabpane hidden">
+    <div class="card">
+      <h2>Kalender-Export</h2>
+      <div class="content">
+        <p class="sub">Exportiert Audition-Followups und Booking-Appointments als .ics (Einzel/Batch).</p>
+        <div class="toolbar"><button class="btn" id="btnICSAll">Alle Termine exportieren (.ics)</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="settings" class="tabpane hidden">
+    <div class="card">
+      <h2>Backup & Daten</h2>
+      <div class="content">
+        <div class="toolbar">
+          <button class="btn" id="btnBackup">JSON-Backup</button>
+          <button class="btn warn" id="btnWipe">Alles löschen</button>
+        </div>
+        <p class="sub">Hinweis: Für <strong>PWA-Installation</strong> muss die App über <strong>HTTPS oder localhost</strong> laufen. Von <code>file://</code> werden Service Worker nicht geladen.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(console.error));
+}
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const store={load(){return JSON.parse(localStorage.getItem('apt_v2')||'{"contacts":[],"auditions":[],"bookings":[]}')},save(d){localStorage.setItem('apt_v2',JSON.stringify(d));refreshKPIs()}};
+let data=store.load();
+$$('.tab').forEach(t=>t.addEventListener('click',e=>{$$('.tab').forEach(x=>x.classList.remove('active'));e.currentTarget.classList.add('active');const id=e.currentTarget.dataset.tab;$$('.tabpane').forEach(p=>p.classList.add('hidden'));$('#'+id).classList.remove('hidden')}));
+const todayISO=()=>new Date().toISOString().slice(0,10), fmtDate=d=>d?new Date(d).toLocaleDateString():'';
+function download(name,text){const blob=new Blob([text],{type:'text/plain'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),500)}
+function refreshKPIs(){const in7=d=>{if(!d)return false; const diff=(new Date(d)-new Date())/(1000*60*60*24); return diff>=0&&diff<=7};const a7=data.auditions.filter(a=>in7(a.next)).length;const appts=data.bookings.flatMap(b=>(b.appts||[]).map(x=>x.when));const b7=appts.filter(in7).length;const fuToday=data.contacts.filter(c=>c.next===todayISO()).length;const over=data.contacts.filter(c=>c.next&&new Date(c.next)<new Date(todayISO())).length;$('#kpiA7').textContent=a7;$('#kpiB7').textContent=b7;$('#kpiFU').textContent=fuToday;$('#kpiOver').textContent=over}
+function renderContacts(){const q=$('#cq').value.trim().toLowerCase();const type=$('#ctype').value;const rows=data.contacts.filter(c=>(type==='all'||c.type===type)&&[c.name,c.company,c.email,c.phone,c.met,(c.notes||'')].join(' ').toLowerCase().includes(q));const tb=$('#tblC tbody');tb.innerHTML='';rows.forEach(c=>{const tr=document.createElement('tr');const pill=!c.next?'—':(new Date(c.next)<new Date(todayISO())?'<span class="pill over">Überfällig</span>':(c.next===todayISO()?'<span class="pill due">Heute</span>':'<span class="pill ok">Später</span>'));tr.innerHTML=`<td><strong>${c.name}</strong><div class="sub">${c.company||''}</div></td><td>${c.company||''}<div class="sub">${c.type||''}</div></td><td><div class="actions">${c.phone?`<a class="action" href="tel:${c.phone.replace(/\s+/g,'')}">Call</a>`:''}${c.email?`<a class="action" href="mailto:${c.email}">Mail</a>`:''}</div><div class="sub">${c.email||''}${c.email&&c.phone?' · ':''}${c.phone||''}${c.social?' · '+c.social:''}</div></td><td>${c.next?fmtDate(c.next):''} ${pill}</td><td class="actions"><a href="#" class="action" data-act="edit">Bearb.</a> <a href="#" class="action" data-act="del">Löschen</a></td>`;tr.dataset.id=c.id;tb.appendChild(tr)});refreshKPIs()}
+$('#btnSaveContact').addEventListener('click',()=>{const c={id:crypto.randomUUID(),name:$('#c_name').value.trim(),type:$('#c_type').value,company:$('#c_company').value.trim(),email:$('#c_email').value.trim(),phone:$('#c_phone').value.trim(),social:$('#c_social').value.trim(),met:$('#c_met').value.trim(),last:$('#c_last').value,next:$('#c_next').value,notes:$('#c_notes').value.trim()};if(!c.name)return alert('Name erforderlich');data.contacts.push(c);store.save(data);$('#btnResetContact').click();renderContacts()});
+$('#btnResetContact').addEventListener('click',()=>['c_name','c_company','c_email','c_phone','c_social','c_met','c_last','c_next','c_notes'].forEach(id=>document.getElementById(id).value=''));
+$('#cq').addEventListener('input',renderContacts);$('#ctype').addEventListener('change',renderContacts);
+$('#tblC').addEventListener('click',e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();const tr=e.target.closest('tr');const id=tr.dataset.id;if(a.dataset.act==='del'){if(confirm('Löschen?')){data.contacts=data.contacts.filter(x=>x.id!==id);store.save(data);renderContacts()}} if(a.dataset.act==='edit'){const c=data.contacts.find(x=>x.id===id);if(!c)return;['c_name','c_company','c_email','c_phone','c_social','c_met','c_last','c_next','c_notes'].forEach(k=>document.getElementById(k).value=c[k.replace('c_','')]||'');$('#c_type').value=c.type||'Sonstiges';window.scrollTo({top:0,behavior:'smooth'})}});
+
+function renderAuditions(){const q=$('#aq').value.trim().toLowerCase();const f=$('#afilter').value;const rows=data.auditions.filter(a=>(f==='all'||a.status===f)&&[a.project,a.role,a.notes,a.ptype,a.rtype].join(' ').toLowerCase().includes(q));const tb=$('#tblA tbody');tb.innerHTML='';rows.forEach(a=>{const tr=document.createElement('tr');tr.dataset.id=a.id;tr.innerHTML=`<td>${fmtDate(a.date)}</td><td>${a.project||''}</td><td>${a.role||''}</td><td>${a.status||''}</td><td>${a.ptype||''}/${a.rtype||''}</td><td>${a.contactId||''}</td><td class="wrap">${(a.notes||'').replace(/</g,'&lt;')}</td><td class="actions"><a href="#" class="action" data-act="edit">Bearb.</a> <a href="#" class="action" data-act="del">Löschen</a></td>`;tb.appendChild(tr)});refreshKPIs()}
+$('#btnSaveAud').addEventListener('click',()=>{const a={id:crypto.randomUUID(),date:$('#a_date').value,project:$('#a_project').value.trim(),role:$('#a_role').value.trim(),ptype:$('#a_ptype').value,rtype:$('#a_rtype').value,status:$('#a_status').value,union:$('#a_union').value,pay:$('#a_pay').value.trim(),contactId:$('#a_contactId').value.trim(),loc:$('#a_loc').value.trim(),material:$('#a_material').value.trim(),next:$('#a_next').value,notes:$('#a_notes').value.trim()};if(!a.date||!a.project)return alert('Datum & Projekt erforderlich');data.auditions.push(a);store.save(data);['a_date','a_project','a_role','a_pay','a_contactId','a_loc','a_material','a_next','a_notes'].forEach(id=>document.getElementById(id).value='');renderAuditions()});
+$('#aq').addEventListener('input',renderAuditions);$('#afilter').addEventListener('change',renderAuditions);
+document.getElementById('btnAudICS').addEventListener('click',()=>{const items=data.auditions.filter(a=>a.next);if(!items.length)return alert('Keine Audition mit Follow‑up.');const a=items[items.length-1];const dt=new Date(a.next+'T09:00:00');const end=new Date(dt.getTime()+30*60000);const pad=n=>String(n).padStart(2,'0');const toICS=d=>d.getUTCFullYear()+pad(d.getUTCMonth()+1)+pad(d.getUTCDate())+'T'+pad(d.getUTCHours())+pad(d.getUTCMinutes())+'00Z';const ics=`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//APT V2//DE
+BEGIN:VEVENT
+UID:${crypto.randomUUID()}@aptv2
+DTSTAMP:${toICS(new Date())}
+DTSTART:${toICS(dt)}
+DTEND:${toICS(end)}
+SUMMARY:Follow‑up Audition: ${a.project}
+DESCRIPTION:Rolle: ${a.role||''} | Status: ${a.status||''}
+END:VEVENT
+END:VCALENDAR`;download(`audition_followup_${a.project.replace(/[^a-z0-9-_]+/gi,'_')}.ics`,ics)});
+
+function renderBookings(){const tb=$('#tblB tbody');tb.innerHTML='';data.bookings.forEach(b=>{const tr=document.createElement('tr');tr.dataset.id=b.id;const ap=b.appts?.map(x=>`${fmtDate(x.when)} ${x.title} @ ${x.loc||''}`).join('<br>')||'';tr.innerHTML=`<td>${b.project||''}</td><td>${b.role||''}</td><td>${b.union||''}</td><td>${b.pay||''}</td><td class="wrap">${ap}</td><td>${b.contactId||''}</td><td class="actions"><a href="#" class="action" data-act="ics">.ics</a> <a href="#" class="action" data-act="del">Löschen</a></td>`;tb.appendChild(tr)});refreshKPIs()}
+$('#btnSaveBooking').addEventListener('click',()=>{const lines=$('#b_appts').value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);const appts=lines.map(l=>{const m=l.match(/(\d{4}-\d{2}-\d{2})(?:\s+(\d{2}:\d{2}))?\s*-\s*(.+?)(?:\s*@\s*(.*))?$/);return m?{when:(m[2]?m[1]+'T'+m[2]:m[1]+'T09:00'),title:m[3],loc:m[4]||''}:{when:null,title:l,loc:''}}).filter(x=>x.when);const b={id:crypto.randomUUID(),project:$('#b_project').value.trim(),role:$('#b_role').value.trim(),union:$('#b_union').value,pay:$('#b_pay').value.trim(),contactId:$('#b_contactId').value.trim(),loc:$('#b_loc').value.trim(),appts:appts,notes:$('#b_notes').value.trim()};if(!b.project)return alert('Projekt erforderlich');data.bookings.push(b);store.save(data);['b_project','b_role','b_pay','b_contactId','b_loc','b_appts','b_notes'].forEach(id=>document.getElementById(id).value='');renderBookings()});
+$('#tblB').addEventListener('click',e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();const tr=e.target.closest('tr');const id=tr.dataset.id;if(a.dataset.act==='del'){if(confirm('Löschen?')){data.bookings=data.bookings.filter(x=>x.id!==id);store.save(data);renderBookings()}} if(a.dataset.act==='ics'){const b=data.bookings.find(x=>x.id===id);if(!b)return;const pad=n=>String(n).padStart(2,'0');const toICS=d=>d.getUTCFullYear()+pad(d.getUTCMonth()+1)+pad(d.getUTCDate())+'T'+pad(d.getUTCHours())+pad(d.getUTCMinutes())+'00Z';let body='BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//APT V2//DE\n';(b.appts||[]).forEach(ap=>{const dt=new Date(ap.when);const end=new Date(dt.getTime()+60*60000);body+='BEGIN:VEVENT\nUID:'+crypto.randomUUID()+'@aptv2\nDTSTAMP:'+toICS(new Date())+'\nDTSTART:'+toICS(dt)+'\nDTEND:'+toICS(end)+'\nSUMMARY:'+b.project+' - '+ap.title+'\nDESCRIPTION:Rolle: '+(b.role||'')+'\nLOCATION:'+(ap.loc||'')+'\nEND:VEVENT\n'});body+='END:VCALENDAR';download(`booking_${b.project.replace(/[^a-z0-9-_]+/gi,'_')}.ics`,body)}});
+document.getElementById('btnBookingICS').addEventListener('click',()=>{if(!data.bookings.length)return alert('Kein Booking vorhanden.');const b=data.bookings[data.bookings.length-1];const pad=n=>String(n).padStart(2,'0');const toICS=d=>d.getUTCFullYear()+pad(d.getUTCMonth()+1)+pad(d.getUTCDate())+'T'+pad(d.getUTCHours())+pad(d.getUTCMinutes())+'00Z';let body='BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//APT V2//DE\n';(b.appts||[]).forEach(ap=>{const dt=new Date(ap.when);const end=new Date(dt.getTime()+60*60000);body+='BEGIN:VEVENT\nUID:'+crypto.randomUUID()+'@aptv2\nDTSTAMP:'+toICS(new Date())+'\nDTSTART:'+toICS(dt)+'\nDTEND:'+toICS(end)+'\nSUMMARY:'+b.project+' - '+ap.title+'\nLOCATION:'+(ap.loc||'')+'\nEND:VEVENT\n'});body+='END:VCALENDAR';download(`last_booking_${b.project.replace(/[^a-z0-9-_]+/gi,'_')}.ics`,body)});
+
+document.getElementById('btnICSAll').addEventListener('click',()=>{const pad=n=>String(n).padStart(2,'0');const toICS=d=>d.getUTCFullYear()+pad(d.getUTCMonth()+1)+pad(d.getUTCDate())+'T'+pad(d.getUTCHours())+pad(d.getUTCMinutes())+'00Z';let body='BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//APT V2//DE\n';data.auditions.filter(a=>a.next).forEach(a=>{const dt=new Date(a.next+'T09:00:00');const end=new Date(dt.getTime()+30*60000);body+='BEGIN:VEVENT\nUID:'+crypto.randomUUID()+'@aptv2\nDTSTAMP:'+toICS(new Date())+'\nDTSTART:'+toICS(dt)+'\nDTEND:'+toICS(end)+'\nSUMMARY:Follow‑up Audition: '+a.project+'\nEND:VEVENT\n'});data.bookings.forEach(b=>(b.appts||[]).forEach(ap=>{const dt=new Date(ap.when);const end=new Date(dt.getTime()+60*60000);body+='BEGIN:VEVENT\nUID:'+crypto.randomUUID()+'@aptv2\nDTSTAMP:'+toICS(new Date())+'\nDTSTART:'+toICS(dt)+'\nDTEND:'+toICS(end)+'\nSUMMARY:'+b.project+' - '+ap.title+'\nLOCATION:'+(ap.loc||'')+'\nEND:VEVENT\n'}));body+='END:VCALENDAR';download('aptv2_all.ics',body)});
+
+document.getElementById('btnBackup').addEventListener('click',()=>{const a=document.createElement('a');const blob=new Blob([JSON.stringify(data)],{type:'application/json'});a.href=URL.createObjectURL(blob);a.download='apt_v2_backup_'+todayISO()+'.json';a.click()});
+document.getElementById('btnWipe').addEventListener('click',()=>{if(prompt('Zum Löschen bitte APTV2 tippen:')==='APTV2'){data={contacts:[],auditions:[],bookings:[]};store.save(data);location.reload()}});
+
+if(!localStorage.getItem('apt_v2_seed')){data.contacts.push({id:crypto.randomUUID(),name:'Jane Smith',type:'Casting',company:'TalentWorks',email:'jane@talentworks.example',phone:'+49 30 1234567',next:todayISO()});data.auditions.push({id:crypto.randomUUID(),date:todayISO(),project:'Kiez Nacht',role:'Gast',ptype:'Serie',rtype:'Day Player',status:'Callback',union:'None',pay:'',next:todayISO()});data.bookings.push({id:crypto.randomUUID(),project:'CoffeeJoy',role:'Lead',union:'None',pay:'',appts:[{when:todayISO()+'T15:00',title:'Fitting',loc:'Studio A'}]});store.save(data);localStorage.setItem('apt_v2_seed','1')}
+renderContacts();renderAuditions();renderBookings();refreshKPIs();
+</script>
+</body>
+</html>
